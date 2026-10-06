@@ -2,7 +2,7 @@
   "$schema": "https://rcade.dev/manifest.schema.json",
   "name": "spinner-toy",
   "display_name": "spinner toy",
-  "description": "play with the haptic spinner :)",
+  "description": "play with the haptics on the spinner :)",
   "visibility": "private",
   "authors": [
     {
