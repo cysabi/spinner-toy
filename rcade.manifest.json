@@ -1,0 +1,22 @@
+{
+  "$schema": "https://rcade.dev/manifest.schema.json",
+  "name": "spinner-toy",
+  "display_name": "spinner toy",
+  "description": "play with the haptic spinner :)",
+  "visibility": "private",
+  "authors": [
+    {
+      "display_name": "cyrene zhang"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "@rcade/input-spinners",
+      "version": "2.0.0"
+    },
+    {
+      "name": "@rcade/input-classic",
+      "version": "1.0.0"
+    }
+  ]
+}

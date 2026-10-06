@@ -1,0 +1,192 @@
+/* The cabinet's screen is 336×262 CSS px; the cabinet scales the page up. */
+:root {
+    --ink: #e8e6f0;
+    --dim: #7d7a8c;
+    --panel: #1e1b2a;
+    --edge: #34304a;
+    /* Set to the showing curve's colour. */
+    --accent: #6ee7a0;
+    font: 11px ui-monospace, Consolas, "Courier New", monospace;
+    color: var(--ink);
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+    background: #14121c;
+    overflow: hidden;
+}
+
+#app {
+    box-sizing: border-box;
+    width: 336px;
+    height: 262px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    touch-action: none;
+}
+
+/* The bar along the top of the graph box, its items evenly spread:
+   [a: X   g: X   v: X   y: X   c: < target >] */
+#top {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 3px 6px 0;
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* Fixed-width values, so changing digits never move anything. */
+#top .value {
+    display: inline-block;
+    min-width: 6ch;
+}
+
+/* Speed is usually four characters, like "360°" or "-90°". */
+#top .value.velocity {
+    min-width: 4ch;
+}
+
+/* The curve's value is usually "0.50" or "345°". */
+#top .value.short {
+    min-width: 4ch;
+}
+
+/* "c: < target >", right-aligned in a slot as wide as the longest,
+   "c: < friction >", so nothing else moves. */
+#top .curve {
+    min-width: 15ch;
+    text-align: right;
+    white-space: pre;
+    cursor: pointer;
+}
+
+#top .chooser {
+    min-width: 0;
+}
+
+
+
+/* A message covers the bar for a moment. */
+#message {
+    display: none;
+    position: absolute;
+    inset: 3px 6px 0;
+    background: var(--panel);
+    color: #ff5c8a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#top.message #message {
+    display: block;
+}
+
+.label {
+    color: var(--dim);
+}
+
+/* The sections are one grid: stacked, each line between them shared. */
+.panel {
+    /* The panel's background, which the focus tints. */
+    --surface: var(--panel);
+    position: relative;
+    box-sizing: border-box;
+    border: 1px solid var(--edge);
+    background-color: var(--surface);
+    transition: border-color 120ms, background-color 120ms;
+}
+
+.panel + .panel {
+    margin-top: -1px;
+}
+
+/* The section the joystick is on: its border and background tinted with
+   the showing curve's colour. Over its neighbours, so its border shows all
+   round. */
+.panel.focused {
+    z-index: 1;
+    --surface: color-mix(in srgb, var(--accent) 5%, var(--panel));
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--edge));
+}
+
+#graph {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Grid lines: solid, a fixed step from the background they're on, so they
+   stay as subtle on a focused panel's tint as on a plain one. */
+.grid-line {
+    stroke: color-mix(in srgb, var(--ink) 8%, var(--surface));
+}
+
+.turn-line {
+    stroke: color-mix(in srgb, var(--ink) 17%, var(--surface));
+}
+
+#plot {
+    display: block;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    font-family: inherit;
+}
+
+/* [preset 3/9               <  detents  >] */
+.row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 22px;
+    padding: 0 6px;
+}
+
+/* Which button does what, quietest of all. */
+.hint {
+    color: color-mix(in srgb, var(--dim) 40%, var(--panel));
+}
+
+.row:not(.focused) .hint {
+    visibility: hidden;
+}
+
+/* Over the plot's top-right corner, while B would delete a point. */
+#graph-hint {
+    position: absolute;
+    top: 18px;
+    right: 6px;
+}
+
+/* Where the choice is in its list, quieter than the label. */
+.count {
+    color: color-mix(in srgb, var(--dim) 65%, var(--panel));
+    font-variant-numeric: tabular-nums;
+}
+
+/* "< name >", one span, right-aligned in a slot as wide as the longest,
+   "< detents & tension ramp >", so nothing else moves. */
+.chooser {
+    display: inline-block;
+    margin-left: auto;
+    min-width: 26ch;
+    text-align: right;
+    white-space: pre;
+}
+
+.arrow {
+    color: var(--dim);
+    cursor: pointer;
+}
+
+.panel.focused .arrow {
+    color: var(--accent);
+}
