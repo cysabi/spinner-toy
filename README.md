@@ -1,18 +1,15 @@
 # `spinner-toy`
-> draw how a knob feels, then feel it
+> play with the haptics on the spinner :)
 
-an rcade game for shaping the t-knob's haptics live. the left spinner is the knob you're feeling, the right one edits its curves.
-- four curves: target, tension, mass, friction
-- presets from plain detents to coils that wind up and spin forever
-- every rumble preset from web-haptics, one button away
+an rcade game for playing with the t-knob's haptics live.
+- visualize and change all 4 curves. target, tension, mass, friction
+- many presets. detents, coils, etc
+- rumble presets with the same api as https://haptics.lochie.me
 
 ## usage
 - **left joystick ▲▼** picks a section. **◀▶** steps it
 - **left spinner** moves the cursor. **right spinner** edits the shown curve there, adding a point if there isn't one. **b** deletes it
-- **a** tares on the preset row, and plays the rumble elsewhere
-- **p2's a** tares
-
-editing anything makes the preset or curve **custom**.
+- **a** to tare or rumble
 
 | preset | feel |
 |---|---|
