@@ -1,52 +1,37 @@
-# Spinner Toy
+# `spinner-toy`
+> draw how a knob feels, then feel it
 
-Draw how the left T-Knob feels, and feel it as you go. An RCade game for the
-cabinet's 336×262 screen, two joysticks, two spinners and four buttons. The
-mouse works too.
+an rcade game for shaping the t-knob's haptics live. the left spinner is the knob you're feeling, the right one edits its curves.
+- four curves: target, tension, mass, friction
+- presets from plain detents to coils that wind up and spin forever
+- every rumble preset from web-haptics, one button away
 
-```bash
-pnpm install
-pnpm dev
-```
+## usage
+- **left joystick ▲▼** picks a section. **◀▶** steps it
+- **left spinner** moves the cursor. **right spinner** edits the shown curve there, adding a point if there isn't one. **b** deletes it
+- **a** tares on the preset row, and plays the rumble elsewhere
+- **p2's a** tares
 
-## Play
+editing anything makes the preset or curve **custom**.
 
-```
-┌ a: 270.4°   g: 3510.4°   v: 0°   y: 630°         c: < target > ┐
-│ the graph: all four curves, the one shown in front               │
-└──────────────────────────────────────────────────────────────────┘
-[ preset 2/9                                         < detents >  ]
-[ curve 1/6                                            < steps >  ]
-[ rumble 1/11                                        < success >  ]
-```
-
-`a` is the angle in the turn, `g` the global angle, `v` degrees per second,
-`y` the shown curve at the cursor, `c` the shown curve.
-
-- **Left joystick ▲▼** picks a section. **◀▶** steps it.
-- **Left spinner** is the cursor. **Right spinner** edits the shown curve
-  there, adding a point if there isn't one. **B** deletes it.
-- **A** tares on the preset row, and plays the rumble elsewhere.
-- **P2's A** tares.
-
-Editing anything makes the preset or curve **custom**.
-
-| Preset | Feel |
+| preset | feel |
 |---|---|
-| stock | Motor off. |
-| detents | 24 per turn. |
-| detents & tension ramp | Springs fading from full to none over four turns. |
-| mass ramp | Mass rising over four turns. |
-| friction ramp | Friction rising over four turns. |
-| coil | Walls meeting at 0: wind it either way, it springs back. |
-| coil & tension steps | The coil, harder a step every quarter turn. |
-| flywheel | Mass 0.5, friction 0. |
-| wheee | The target always 10° ahead: it spins forever. |
+| stock | motor off |
+| detents | 24 per turn |
+| detents & tension ramp | springs fading from full to none over four turns |
+| mass ramp | mass rising over four turns |
+| friction ramp | friction rising over four turns |
+| coil | walls meeting at 0: wind it either way, it springs back |
+| coil & tension steps | the coil, harder a step every quarter turn |
+| flywheel | mass 0.5, friction 0 |
+| wheee | the target always 10° ahead: it spins forever |
 
-## Checks
+## local setup
+- `pnpm i`
+- `pnpm dev`
+### building for production
+- `pnpm build`
 
-```bash
-pnpm check
-pnpm test
-pnpm build
-```
+---
+
+*empathy included • [**@cysabi**](https://github.com/cysabi) • [cysabi.github.io](https://cysabi.github.io)*
