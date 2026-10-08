@@ -109,9 +109,10 @@ test("grid lines never crowd, however far the view grows", async () => {
 test("the curve chooser's shapes, and telling them apart", async () => {
     const { KINDS, kindCurve, kindOf } = await import("../src/model.ts");
     for (const name of ["target", "tension"] as const) {
-        for (const kind of KINDS) assert.equal(kindOf(name, kindCurve(name, kind)), kind, `${name} ${kind}`);
+        for (const kind of KINDS) assert.equal(kindOf(name, kindCurve(name, kind, 0.3)), kind, `${name} ${kind}`);
     }
-    assert.equal(toCurve(kindCurve("target", "uniform 0.25")).valueAt(77), 90, "a target's value is a share of a turn");
+    assert.equal(toCurve(kindCurve("target", "uniform", 90)).valueAt(77), 90);
+    assert.equal(kindOf("mass", fromCurve(Curve.uniform(0.42))), "uniform", "any single value is uniform");
     assert.equal(toCurve(kindCurve("tension", "steps")).valueAt(200), 2 / 3);
     assert.equal(kindOf("tension", fromCurve(Curve.ramp(0, 0.7))), "custom");
 });

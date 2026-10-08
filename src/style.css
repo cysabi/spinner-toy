@@ -159,13 +159,6 @@ html, body {
     visibility: hidden;
 }
 
-/* Over the plot's top-right corner, while B would delete a point. */
-#graph-hint {
-    position: absolute;
-    top: 18px;
-    right: 6px;
-}
-
 /* Where the choice is in its list, quieter than the label. */
 .count {
     color: color-mix(in srgb, var(--dim) 65%, var(--panel));

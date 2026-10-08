@@ -168,7 +168,7 @@ export interface Layout {
 }
 
 /** One value everywhere: it has no say in the layout. */
-function isUniform(edit: EditCurve): boolean {
+export function isUniform(edit: EditCurve): boolean {
     const [first] = edit.points;
     return edit.flatBefore && edit.flatAfter && edit.points.every(point => point.x === first.x && point.y === first.y);
 }
@@ -244,7 +244,8 @@ export function yRange(config: Config, name: Name, shown: [number, number]): [nu
     const ys = config.target.points.flatMap(point => [point.y, point.in ?? point.y, point.out ?? point.y]);
     const samples = 64;
     for (let i = 0; i <= samples; i++) ys.push(shownValue(config, "target", shown[0] + (shown[1] - shown[0]) * i / samples));
-    const low = Math.min(...ys);
+    // 0 is always on the axis.
+    const low = Math.min(0, ...ys);
     return [low, Math.max(low + 360, ...ys)];
 }
 
@@ -257,12 +258,12 @@ export function shownValue(config: Config, name: Name, x: number): number {
 
 // ---- The curve chooser: ready-made shapes for one curve. ----
 
-export const KINDS = ["steps", "ramp", "uniform 0", "uniform 0.25", "uniform 0.5", "uniform 1"] as const;
+export const KINDS = ["steps", "ramp", "uniform"] as const;
 export type Kind = typeof KINDS[number];
 
-/** A ready-made curve. Targets are angles: steps are 24 detents, the ramp
- *  follows the knob (no pull), and a uniform value is that share of a turn. */
-export function kindCurve(name: Name, kind: Kind): EditCurve {
+/** A ready-made curve. Targets are angles: steps are 24 detents and the ramp
+ *  follows the knob (no pull). A uniform curve is `value` everywhere. */
+export function kindCurve(name: Name, kind: Kind, value = 0): EditCurve {
     const target = name === "target";
     if (kind === "steps") {
         if (target) return fromCurve(Curve.steps(24));
@@ -271,12 +272,12 @@ export function kindCurve(name: Name, kind: Kind): EditCurve {
         return fromCurve(Curve.points(points));
     }
     if (kind === "ramp") return fromCurve(target ? Curve.ramp(0, 360) : Curve.ramp(0, 1));
-    const value = Number(kind.split(" ")[1]);
-    return fromCurve(Curve.uniform(target ? value * 360 : value));
+    return fromCurve(Curve.uniform(value));
 }
 
 /** Which ready-made curve this is, if any. */
 export function kindOf(name: Name, edit: EditCurve): Kind | "custom" {
+    if (isUniform(edit)) return "uniform";
     const json = JSON.stringify(edit);
     return KINDS.find(kind => JSON.stringify(kindCurve(name, kind)) === json) ?? "custom";
 }

@@ -1,6 +1,6 @@
 import { P1, P2, rumblePresets } from "@rcade/plugin-input-spinners";
 import { on as onInput } from "@rcade/plugin-input-classic";
-import { KINDS, NAMES, extent, kindCurve, kindOf, layout, nudge, removePoint, repeating, shownAngle, shownValue, snapped, toCurves, type Config, type EditCurve, type Kind, type Name } from "./model.ts";
+import { KINDS, NAMES, extent, isUniform, kindCurve, kindOf, layout, nudge, removePoint, repeating, shownAngle, shownValue, snapped, toCurves, type Config, type EditCurve, type Kind, type Name } from "./model.ts";
 import { PRESETS } from "./presets.ts";
 import { COLORS, Graph } from "./render.ts";
 import "./style.css";
@@ -48,7 +48,6 @@ app.innerHTML = `
             <span id="message"></span>
         </header>
         <svg id="plot"></svg>
-        <span class="hint" id="graph-hint">(b to delete)</span>
     </section>
     ${chooser("preset", "(a to tare)")}
     ${chooser("curve")}
@@ -133,7 +132,9 @@ function chooseCurve(step: -1 | 1): void {
     const current = kindOf(active, config[active]);
     if (current === "custom") customCurves[active] = config[active];
     const next = cycle(curveChoices(), current, step);
-    setConfig({ ...config, [active]: next === "custom" ? customCurves[active]! : kindCurve(active, next) }, true);
+    // A uniform curve starts at the value under the cursor.
+    const value = shownValue(config, active, here());
+    setConfig({ ...config, [active]: next === "custom" ? customCurves[active]! : kindCurve(active, next, value) }, true);
 }
 
 function chooseActive(step: -1 | 1): void {
@@ -154,6 +155,12 @@ function here(): number {
 }
 
 function edit(degrees: number): void {
+    // A uniform curve moves as a whole, and stays uniform.
+    if (isUniform(config[active])) {
+        const curve = config[active];
+        setConfig({ ...config, [active]: nudge(curve, active, curve.points[0].x, degrees * PER_DEGREE[active]) }, true);
+        return;
+    }
     const shape = layout(config);
     // A single value inside a loop starts repeating over it, so it loops too.
     const curve = shape.wrapsLeft || shape.wrapsRight ? repeating(config[active], shape.loop) : config[active];
@@ -279,7 +286,6 @@ graphPanel.addEventListener("pointercancel", release);
 const showing = element("#showing");
 const top = element("#top");
 const messageLine = element("#message");
-const graphHint = element("#graph-hint");
 const angleText = element("#angle");
 const globalText = element("#global-angle");
 const velocityText = element("#velocity");
@@ -321,11 +327,12 @@ function frame(now: number): void {
     showChoice("preset", presetIndex === -1 ? "custom" : PRESETS[presetIndex].name, presets.indexOf(presetIndex), presets.length);
     const curves = curveChoices();
     const kind = kindOf(active, config[active]);
-    showChoice("curve", kind, curves.indexOf(kind), curves.length);
+    const level = config[active].points[0].y;
+    const label = kind !== "uniform" ? kind : active === "target" ? `uniform [${Math.round(level)}°]` : `uniform [${level.toFixed(2)}]`;
+    showChoice("curve", label, curves.indexOf(kind), curves.length);
     showChoice("rumble", RUMBLES[rumbleIndex], rumbleIndex, RUMBLES.length);
 
     const snap = snapped(config[active], shown);
-    graphHint.hidden = section !== "graph" || snap === undefined;
     graph.render({ config, active, cursor: shown, range, snap });
     requestAnimationFrame(frame);
 }
